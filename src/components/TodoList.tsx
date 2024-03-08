@@ -60,7 +60,7 @@ const TodoList: React.FC<any> = () => {
             <div>
               <input
                 type="checkbox"
-                checked={task.completed || false}
+                checked={task.completed}
                 onChange={() => handleToggleComplete(task.id, task.name)}
               />
             </div>
