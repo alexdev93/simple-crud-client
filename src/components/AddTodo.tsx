@@ -1,19 +1,35 @@
 import React, { useState } from "react";
 import { addTodo } from "../redux/actions";
 import { useDispatch } from "react-redux";
+import axios from "axios";
 
 const AddTodo: React.FC<any> = () => {
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [completed, setCompleted] = useState(false);
 
-  const handleAddTodo = () => {
+  const handleAddTodo = async () => {
     if (description.trim() !== "" && category.trim() !== "") {
       dispatch(addTodo(name, description, category));
+      try {
+        const response = await axios.post("http://localhost:8080/api/tasks", {
+          name,
+          description,
+          category,
+          completed
+        });
+
+        console.log("Task added successfully to the server!", response.data);
+      } catch (error) {
+        console.error("Failed to add task to the server:", error);
+      }
+
       setName("");
       setDescription("");
       setCategory("");
+      setCompleted(false)
     }
   };
 

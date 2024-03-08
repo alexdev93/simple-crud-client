@@ -1,18 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteTask, toggleComplete } from "../redux/actions";
+import { deleteTask, setTodos, toggleComplete } from "../redux/actions";
 import Todo from "../types/Todo";
+import axios from "axios";
 
 const TodoList: React.FC<any> = () => {
   const dispatch = useDispatch();
-  const todos = useSelector((state:any) => state.todos);
+  const todos = useSelector((state: any) => state.todos);
 
-  const handleToggleComplete = (taskId: number) => {
-    dispatch(toggleComplete(taskId));
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/tasks");
+
+        if (isMounted) {
+          dispatch(setTodos(response.data));
+        }
+      } catch (error) {
+        console.error("Failed to fetch tasks from the server:", error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch]);
+
+  const handleToggleComplete = async (taskId: number) => {
+    try {
+      await axios.put(`http://localhost:8080/api/tasks/${taskId}/complete`);
+      dispatch(toggleComplete(taskId));
+    } catch (error) {
+      console.error(
+        `Failed to update task ${taskId} completion status:`,
+        error
+      );
+    }
   };
 
-  const handleDeleteTask = (taskId: number) => {
-    dispatch(deleteTask(taskId));
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/tasks/${taskId}`);
+      dispatch(deleteTask(taskId));
+    } catch (error) {
+      console.error(`Failed to delete task ${taskId}:`, error);
+    }
   };
 
   return (

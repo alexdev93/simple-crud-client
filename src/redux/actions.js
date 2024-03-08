@@ -13,3 +13,7 @@ export const addTodo = (name, description, category) => ({
     payload: taskId,
   });
   
+export const setTodos = (todos) => ({
+  type: 'SET_TODOS',
+  payload: todos,
+});
