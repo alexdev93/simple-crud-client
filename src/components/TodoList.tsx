@@ -30,9 +30,9 @@ const TodoList: React.FC<any> = () => {
     };
   }, [dispatch]);
 
-  const handleToggleComplete = async (taskId: number) => {
+  const handleToggleComplete = async (taskId: number, taskName: string) => {
     try {
-      await axios.put(`http://localhost:8080/api/tasks/${taskId}/complete`);
+      await axios.put(`http://localhost:8080/api/tasks/${taskName}/complete`);
       dispatch(toggleComplete(taskId));
     } catch (error) {
       console.error(
@@ -42,9 +42,9 @@ const TodoList: React.FC<any> = () => {
     }
   };
 
-  const handleDeleteTask = async (taskId: number) => {
+  const handleDeleteTask = async (taskId: number, taskName: string) => {
     try {
-      await axios.delete(`http://localhost:8080/api/tasks/${taskId}`);
+      await axios.delete(`http://localhost:8080/api/tasks/${taskName}`);
       dispatch(deleteTask(taskId));
     } catch (error) {
       console.error(`Failed to delete task ${taskId}:`, error);
@@ -61,7 +61,7 @@ const TodoList: React.FC<any> = () => {
               <input
                 type="checkbox"
                 checked={task.completed || false}
-                onChange={() => handleToggleComplete(task.id)}
+                onChange={() => handleToggleComplete(task.id, task.name)}
               />
             </div>
             <div className="task-info">
@@ -74,7 +74,7 @@ const TodoList: React.FC<any> = () => {
             </div>
             <button
               className="del-btn"
-              onClick={() => handleDeleteTask(task.id)}
+              onClick={() => handleDeleteTask(task.id, task.name)}
             >
               <div>&times;</div>
             </button>
