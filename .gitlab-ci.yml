@@ -1,0 +1,16 @@
+before_script:
+  - yarn install
+
+build:
+  stage: build
+  script:
+    - yarn build
+    - docker build -t $DOCKER_IMAGE .
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    - docker push $DOCKER_IMAGE
